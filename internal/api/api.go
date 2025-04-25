@@ -54,6 +54,8 @@ func Init() {
 	HandleFunc("api/restart", restartHandler)
 	HandleFunc("api/log", logHandler)
 
+	HandleFunc("api/info", infoHandler) // added for testing
+
 	Handler = http.DefaultServeMux // 4th
 
 	if cfg.Mod.Origin == "*" {
@@ -145,7 +147,7 @@ const (
 
 var Handler http.Handler
 
-func exposeEndpoint(pattern string) bool {
+func ExposeEndpoint(pattern string) bool {
 	if pattern == "/api/ws" {
 		return true
 	}
@@ -156,6 +158,9 @@ func exposeEndpoint(pattern string) bool {
 		return true
 	}
 	if strings.HasPrefix(pattern, "/api/stream.") {
+		return true
+	}
+	if strings.HasPrefix(pattern, "api/info") {
 		return true
 	}
 
@@ -173,11 +178,10 @@ func HandleFunc(pattern string, handler http.HandlerFunc) {
 	log.Info().Str("path", pattern).Msg("[api] register path")
 	http.HandleFunc(pattern, handler)
 	// if pattern starts with api, also register go2rtc/pattern
-	if exposeEndpoint(pattern) {
+	if ExposeEndpoint(pattern) {
 		pattern = "/go2rtc" + pattern
 		http.HandleFunc(pattern, handler)
 		log.Info().Str("expose ", pattern).Msg("[api] register path")
-
 	}
 
 }
@@ -252,6 +256,9 @@ func apiHandler(w http.ResponseWriter, r *http.Request) {
 	app.Info["host"] = r.Host
 	mu.Unlock()
 
+	ResponseJSON(w, app.Info)
+}
+func infoHandler(w http.ResponseWriter, r *http.Request) {
 	ResponseJSON(w, app.Info)
 }
 
