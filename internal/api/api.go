@@ -145,6 +145,23 @@ const (
 
 var Handler http.Handler
 
+func exposeEndpoint(pattern string) bool {
+	if pattern == "/api/ws" {
+		return true
+	}
+	if strings.HasPrefix(pattern, "/api/hls") {
+		return true
+	}
+	if strings.HasPrefix(pattern, "/api/webrtc") {
+		return true
+	}
+	if strings.HasPrefix(pattern, "/api/stream.") {
+		return true
+	}
+
+	return false
+}
+
 // HandleFunc handle pattern with relative path:
 // - "api/streams" => "{basepath}/api/streams"
 // - "/streams"    => "/streams"
@@ -152,12 +169,15 @@ func HandleFunc(pattern string, handler http.HandlerFunc) {
 	if len(pattern) == 0 || pattern[0] != '/' {
 		pattern = basePath + "/" + pattern
 	}
-	log.Trace().Str("path", pattern).Msg("[api] register path")
+	// Trace
+	log.Info().Str("path", pattern).Msg("[api] register path")
 	http.HandleFunc(pattern, handler)
 	// if pattern starts with api, also register go2rtc/pattern
-	if strings.HasPrefix(pattern, "/api") {
+	if exposeEndpoint(pattern) {
 		pattern = "/go2rtc" + pattern
 		http.HandleFunc(pattern, handler)
+		log.Info().Str("expose ", pattern).Msg("[api] register path")
+
 	}
 
 }
