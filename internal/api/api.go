@@ -160,7 +160,7 @@ func ExposeEndpoint(pattern string) bool {
 	if strings.HasPrefix(pattern, "/api/stream.") {
 		return true
 	}
-	if strings.HasPrefix(pattern, "api/info") {
+	if strings.HasPrefix(pattern, "/api/info") {
 		return true
 	}
 
