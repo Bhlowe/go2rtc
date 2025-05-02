@@ -2,12 +2,12 @@ package app
 
 import (
 	"errors"
-	"github.com/AlexxIT/go2rtc/pkg/shell"
-	"github.com/AlexxIT/go2rtc/pkg/yaml"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/AlexxIT/go2rtc/pkg/shell"
+	"github.com/AlexxIT/go2rtc/pkg/yaml"
 )
 
 func LoadConfig(v any) {

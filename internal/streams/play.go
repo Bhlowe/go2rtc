@@ -16,11 +16,17 @@ func (s *Stream) Play(source string) error {
 	}
 	s.mu.Unlock()
 
-	if source == "" {
-		return nil
-	}
-
+	var source string
 	var src core.Producer
+
+	switch urlOrProd.(type) {
+	case string:
+		if source = urlOrProd.(string); source == "" {
+			return nil
+		}
+	case core.Producer:
+		src = urlOrProd.(core.Producer)
+	}
 
 	for _, producer := range s.producers {
 		if producer.conn == nil {

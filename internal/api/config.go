@@ -1,24 +1,13 @@
 package api
 
 import (
-	"github.com/AlexxIT/go2rtc/internal/app"
-	"gopkg.in/yaml.v3"
 	"io"
 	"net/http"
 	"os"
-	"strings"
+
+	"github.com/AlexxIT/go2rtc/internal/app"
+	"gopkg.in/yaml.v3"
 )
-
-func check(data []byte, what string) {
-
-	// Check for this "*"*" string. If found, an error.
-	var str = string(data)
-	if strings.Contains(str, "*\"*") {
-		log.Info().Msgf("check failed: %s %s", what, str)
-	} else {
-		log.Info().Msgf("check passed: %s", what)
-	}
-}
 
 func configHandler(w http.ResponseWriter, r *http.Request) {
 	if app.ConfigPath == "" {
@@ -33,8 +22,6 @@ func configHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "", http.StatusNotFound)
 			return
 		}
-		log.Info().Msgf("file=%s, data=%s\n", app.ConfigPath, string(data))
-		check(data, "GET")
 		// https://www.ietf.org/archive/id/draft-ietf-httpapi-yaml-mediatypes-00.html
 		Response(w, data, "application/yaml")
 
@@ -44,29 +31,21 @@ func configHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		check(data, "POST/PATCH")
 
 		if r.Method == "PATCH" {
 			// no need to validate after merge
 			data, err = mergeYAML(app.ConfigPath, data)
-
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 				return
 			}
-
-			check(data, "POST/PATCH post mergeYAML")
-
 		} else {
 			// validate config
 			if err = yaml.Unmarshal(data, map[string]any{}); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
-			check(data, "POST/PATCH post yaml.Unmarshal")
-
 		}
-		check(data, "POST/PATCH WriteFile")
 
 		if err = os.WriteFile(app.ConfigPath, data, 0644); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -81,7 +60,6 @@ func mergeYAML(file1 string, yaml2 []byte) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	check(data1, "mergeYAML 1")
 
 	// Unmarshal the first YAML file into a map
 	var config1 map[string]any
