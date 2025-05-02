@@ -7,7 +7,7 @@ import (
 	"github.com/AlexxIT/go2rtc/pkg/core"
 )
 
-func (s *Stream) Play(source string) error {
+func (s *Stream) Play(urlOrProd any) error {
 	s.mu.Lock()
 	for _, producer := range s.producers {
 		if producer.state == stateInternal && producer.conn != nil {
