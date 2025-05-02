@@ -13,7 +13,7 @@ check_command() {
 check_command go
 check_command 7z
 check_command upx
-exit
+
 # Windows amd64
 export GOOS=windows
 export GOARCH=amd64
