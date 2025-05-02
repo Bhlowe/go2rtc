@@ -1,12 +1,13 @@
 #!/bin/sh
 
 check_command() {
-    if ! command -v $1 &> /dev/null
-    then
+    command -v $1 &> /dev/null || {
         echo "Error: $1 could not be found. Please install it."
         exit 1
-    fi
+    }
 }
+
+
 
 # Check for required commands
 check_command go
