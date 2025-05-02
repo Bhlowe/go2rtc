@@ -47,6 +47,8 @@ var sanitize = regexp.MustCompile(`\s`)
 // Validate - not allow creating dynamic streams with spaces in the source
 func Validate(source string) error {
 	if sanitize.MatchString(source) {
+
+		log.Info().Msgf("[streams] validate failed for =%s", source)
 		return errors.New("streams: invalid dynamic source")
 	}
 	return nil
@@ -54,7 +56,9 @@ func Validate(source string) error {
 
 func New(name string, sources ...string) *Stream {
 	for _, source := range sources {
-		if Validate(source) != nil {
+		var err = Validate(source)
+
+		if err != nil {
 			return nil
 		}
 	}

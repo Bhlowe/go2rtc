@@ -1,11 +1,10 @@
 package streams
 
 import (
-	"net/http"
-
 	"github.com/AlexxIT/go2rtc/internal/api"
 	"github.com/AlexxIT/go2rtc/internal/app"
 	"github.com/AlexxIT/go2rtc/pkg/probe"
+	"net/http"
 )
 
 func apiStreams(w http.ResponseWriter, r *http.Request) {
@@ -44,16 +43,20 @@ func apiStreams(w http.ResponseWriter, r *http.Request) {
 
 	case "PUT":
 		name := query.Get("name")
+
 		if name == "" {
 			name = src
 		}
+		app.Logger.Info().Msgf("put stream %s=%s", name, src)
 
-		if New(name, query["src"]...) == nil {
+		if New(name, src) == nil {
+			app.Logger.Warn().Msgf("stream %s already exists", name)
 			http.Error(w, "", http.StatusBadRequest)
 			return
 		}
 
-		if err := app.PatchConfig([]string{"streams", name}, query["src"]); err != nil {
+		if err := app.PatchConfig([]string{"streams", name}, src); err != nil {
+			app.Logger.Warn().Msgf("stream %s %s %s ", name, src, err)
 			http.Error(w, err.Error(), http.StatusBadRequest)
 		}
 
