@@ -97,7 +97,7 @@ func apiStreams(w http.ResponseWriter, r *http.Request) {
 		}
 
 	case "DELETE":
-		Delete(src) // src is really a name.
+		Delete(src) // Delete the stream. src is the name of the stream, not the url.
 
 		if err := app.PatchConfig([]string{"streams", src}, nil); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
