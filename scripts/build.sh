@@ -5,15 +5,15 @@ check_command() {
         echo "Error: $1 could not be found. Please install it."
         exit 1
     }
+    # No output on success
 }
-
 
 
 # Check for required commands
 check_command go
 check_command 7z
 check_command upx
-
+exit
 # Windows amd64
 export GOOS=windows
 export GOARCH=amd64
