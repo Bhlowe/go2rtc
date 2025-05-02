@@ -5,7 +5,6 @@ check_command() {
         echo "Error: $1 could not be found. Please install it."
         exit 1
     }
-    # No output on success
 }
 
 
