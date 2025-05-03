@@ -22,7 +22,7 @@ func apiStreams(w http.ResponseWriter, r *http.Request) {
 	case "GET":
 		stream := Get(src)
 		if stream == nil {
-			http.Error(w, "", http.StatusNotFound)
+			http.Error(w, "no stream", http.StatusNotFound)
 			return
 		}
 
@@ -51,7 +51,7 @@ func apiStreams(w http.ResponseWriter, r *http.Request) {
 
 		if New(name, src) == nil {
 			app.Logger.Warn().Msgf("stream %s already exists", name)
-			http.Error(w, "", http.StatusBadRequest)
+			http.Error(w, "stream exists", http.StatusBadRequest)
 			return
 		}
 
@@ -63,13 +63,13 @@ func apiStreams(w http.ResponseWriter, r *http.Request) {
 	case "PATCH":
 		name := query.Get("name")
 		if name == "" {
-			http.Error(w, "", http.StatusBadRequest)
+			http.Error(w, "patch name empty", http.StatusBadRequest)
 			return
 		}
 
 		// support {input} templates: https://github.com/AlexxIT/go2rtc#module-hass
 		if Patch(name, src) == nil {
-			http.Error(w, "", http.StatusBadRequest)
+			http.Error(w, "patch failed", http.StatusBadRequest)
 		}
 
 	case "POST":
