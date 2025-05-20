@@ -227,7 +227,14 @@ func middlewareLog(next http.Handler) http.Handler {
 
 func middlewareAuth(username, password string, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if !strings.HasPrefix(r.RemoteAddr, "127.") && !strings.HasPrefix(r.RemoteAddr, "[::1]") && r.RemoteAddr != "@" {
+
+		// if exposed, we don't need auth
+		if strings.HasPrefix(r.RequestURI, "/go2rtc/") {
+			return
+		}
+		check := true || !strings.HasPrefix(r.RemoteAddr, "127.") && !strings.HasPrefix(r.RemoteAddr, "[::1]") && r.RemoteAddr != "@"
+
+		if check {
 			user, pass, ok := r.BasicAuth()
 			if !ok || user != username || pass != password {
 				w.Header().Set("Www-Authenticate", `Basic realm="go2rtc"`)
