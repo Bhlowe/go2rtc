@@ -174,6 +174,11 @@ func HandleFunc(pattern string, handler http.HandlerFunc) {
 	if len(pattern) == 0 || pattern[0] != '/' {
 		pattern = basePath + "/" + pattern
 	}
+
+	if !strings.HasPrefix(pattern, "/api/") {
+		log.Info().Str("path", pattern).Msg("non-api register path")
+	}
+
 	// Trace
 	log.Info().Str("path", pattern).Msg("[api] register path")
 	http.HandleFunc(pattern, handler)

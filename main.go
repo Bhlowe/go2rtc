@@ -66,9 +66,9 @@ func main() {
 
 	// 4. Other sources and servers
 
-	hass.Init()  // hass source, Hass API server
 	onvif.Init() // onvif source, ONVIF API server
 	if false {
+		hass.Init()       // hass source, Hass API server
 		webtorrent.Init() // webtorrent source, WebTorrent module
 
 		// 5. Other sources
