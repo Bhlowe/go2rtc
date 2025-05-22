@@ -9,6 +9,7 @@
 
 #define print_struct_header(str) printf("type %s struct { // size %lu\n", #str, sizeof(struct str))
 #define print_struct_member(str, mem, typ) printf("\t%s %s // offset %lu, size %lu\n", #mem == "type" ? "typ" : #mem, typ, offsetof(struct str, mem), sizeof((struct str){0}.mem))
+#ifdef COMPILE_AS_STANDALONE
 
 // https://github.com/torvalds/linux/blob/master/include/uapi/sound/asound.h
 int main() {
@@ -161,3 +162,5 @@ int main() {
 
 	return 0;
 }
+#endif
+
