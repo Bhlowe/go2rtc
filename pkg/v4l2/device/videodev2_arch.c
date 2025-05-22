@@ -9,6 +9,7 @@
 #define printunimem(str, uni, mem, typ) printf("\t%s %s // offset %lu, size %lu\n", #mem, typ, offsetof(struct str, uni.mem), sizeof((struct str){0}.uni.mem))
 #define printalign1(str, mem2, mem1) printf("\t_ [%lu]byte // align\n", offsetof(struct str, mem2) - offsetof(struct str, mem1) - sizeof((struct str){0}.mem1))
 #define printfiller(str, mem) printf("\t_ [%lu]byte // filler\n", sizeof(struct str) - offsetof(struct str, mem) - sizeof((struct str){0}.mem))
+#ifdef COMPILE_AS_STANDALONE
 
 int main() {
 	printf("const (\n");
@@ -161,3 +162,5 @@ int main() {
 
 	return 0;
 }
+#endif
+

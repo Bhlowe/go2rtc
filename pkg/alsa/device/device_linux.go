@@ -1,5 +1,7 @@
 package device
 
+import "C"
+
 import (
 	"fmt"
 	"syscall"

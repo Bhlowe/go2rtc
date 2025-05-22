@@ -1,6 +1,7 @@
 //go:build linux
 
 package device
+import "C"
 
 import (
 	"bytes"
