@@ -18,12 +18,13 @@ check_command upx
 export GOOS=windows
 export GOARCH=amd64
 FILENAME="go2rtc.exe"
-go build -ldflags "-s -w" -trimpath #  && 7z a -mx9 -bso0 -sdel $FILENAME go2rtc.exe
+BUILD_DATE=$(date '+%m/%d/%Y')
+go build -ldflags "-s -w -X 'github.com/AlexxIT/go2rtc/internal/app.BuildDate=$BUILD_DATE'" -trimpath  # && 7z a -mx9 -bso0 -sdel $FILENAME go2rtc.exe
 cp $FILENAME /data/dev/siteproxy/siteproxy/bin/win64/go2rtc.exe
 
 # Linux amd64
 export GOOS=linux
 export GOARCH=amd64
 FILENAME="go2rtc_linux_amd64"
-go build -ldflags "-s -w" -trimpath -o $FILENAME && upx --lzma --force-overwrite -q --no-progress $FILENAME
+go build -ldflags "-s -w -X 'github.com/AlexxIT/go2rtc/internal/app.BuildDate=$BUILD_DATE'" -trimpath -o $FILENAME  && upx --lzma --force-overwrite -q --no-progress $FILENAME
 cp $FILENAME /data/dev/siteproxy/siteproxy/bin/linux-amd64/go2rtc
