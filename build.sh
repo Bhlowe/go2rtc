@@ -25,6 +25,6 @@ cp $FILENAME /data/dev/siteproxy/siteproxy/bin/win64/go2rtc.exe
 # Linux amd64
 export GOOS=linux
 export GOARCH=amd64
-FILENAME="go2rtc_linux_amd64"
+FILENAME="go2rtc"
 go build -ldflags "-s -w -X 'github.com/AlexxIT/go2rtc/internal/app.BuildDate=$BUILD_DATE'" -trimpath -o $FILENAME  && upx --lzma --force-overwrite -q --no-progress $FILENAME
-cp $FILENAME /data/dev/siteproxy/siteproxy/bin/linux-amd64/go2rtc
+# cp $FILENAME /data/dev/siteproxy/siteproxy/bin/linux-amd64/go2rtc
