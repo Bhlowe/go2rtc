@@ -13,7 +13,7 @@ func initStatic(staticDir string, username string, password string) {
 		log.Info().Str("dir", staticDir).Msg("[api] serve static")
 		root = http.Dir(staticDir)
 	} else {
-		root = http.FS(www.Static)
+		root = http.FS(www.Static) /**/
 	}
 
 	base := len(basePath)

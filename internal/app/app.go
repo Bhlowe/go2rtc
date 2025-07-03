@@ -10,11 +10,11 @@ import (
 )
 
 var (
-	Version   string
-	BuildDate string
-	UserAgent string
+	Version    string
+	BuildDate  string
+	UserAgent  string
 	ConfigPath string
-	Info      = make(map[string]any)
+	Info       = make(map[string]any)
 )
 
 const usage = `Usage of go2rtc:
@@ -72,15 +72,18 @@ func Init() {
 
 	platform := fmt.Sprintf("%s/%s", runtime.GOOS, runtime.GOARCH)
 	msg := Logger.Info().Str("version", Version).Str("platform", platform).Str("revision", revision)
-	if BuildDate != "" {
-		msg = msg.Str("built", BuildDate)
-	}
 	msg.Msg("go2rtc")
 	Logger.Debug().Str("version", runtime.Version()).Str("vcs.time", vcsTime).Msg("build")
 
 	if ConfigPath != "" {
 		Logger.Info().Str("path", ConfigPath).Msg("config")
 	}
+
+	if BuildDate != "" {
+		msg = msg.Str("built", BuildDate)
+		Info["build_date"] = BuildDate
+	}
+
 }
 
 func readRevisionTime() (revision, vcsTime string) {
