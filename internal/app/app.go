@@ -42,7 +42,7 @@ func Init() {
 	revision, vcsTime := readRevisionTime()
 
 	if version {
-		fmt.Printf("go2rtc version %s (%s) %s/%s %s\n", Version, revision, runtime.GOOS, runtime.GOARCH, BuildDate)
+		fmt.Printf("go2rtc version %s (%s) %s/%s build_date %s\n", Version, revision, runtime.GOOS, runtime.GOARCH, BuildDate)
 		os.Exit(0)
 	}
 
