@@ -7,9 +7,13 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
+	"time"
 )
 
 func LoadConfig(v any) {
+	// Note: LoadConfig is called during initialization and reads from in-memory configs,
+	// not directly from files, so no file lock is needed here
 	for _, data := range configs {
 		if err := yaml.Unmarshal(data, v); err != nil {
 			Logger.Warn().Err(err).Send()
@@ -17,21 +21,55 @@ func LoadConfig(v any) {
 	}
 }
 
+// configMu protects all configuration file operations
+var configMu sync.Mutex
+
+// LockConfig acquires the configuration file lock
+func LockConfig() {
+	configMu.Lock()
+}
+
+// UnlockConfig releases the configuration file lock
+func UnlockConfig() {
+	configMu.Unlock()
+}
+
 func PatchConfig(path []string, value any) error {
 	if ConfigPath == "" {
 		return errors.New("config file disabled")
 	}
 
+	// Acquire lock to prevent concurrent config file access
+	configMu.Lock()
+	defer configMu.Unlock()
+
+	start := time.Now()
+	Logger.Info().Strs("path", path).Interface("value", value).Msg("config: patching configuration")
+
 	// empty config is OK
-	b, _ := os.ReadFile(ConfigPath)
+	b, readErr := os.ReadFile(ConfigPath)
+	if readErr != nil {
+		Logger.Warn().Err(readErr).Str("file", ConfigPath).Msg("config: failed to read config file, using empty config")
+		b = []byte{}
+	} else {
+		Logger.Debug().Int("bytes", len(b)).Str("file", ConfigPath).Msg("config: read config file")
+	}
 
 	b, err := yaml.Patch(b, path, value)
 	if err != nil {
-		Logger.Warn().Err(err).Send()
+		Logger.Error().Err(err).Strs("path", path).Interface("value", value).Msg("config: failed to patch YAML")
 		return err
 	}
 
-	return os.WriteFile(ConfigPath, b, 0644)
+	Logger.Debug().Int("bytes", len(b)).Msg("config: patched YAML successfully")
+
+	if err := os.WriteFile(ConfigPath, b, 0644); err != nil {
+		Logger.Error().Err(err).Str("file", ConfigPath).Int("bytes", len(b)).Msg("config: failed to write config file")
+		return err
+	}
+
+	Logger.Info().Strs("path", path).Interface("value", value).Dur("duration", time.Since(start)).Msg("config: configuration patched successfully")
+	return nil
 }
 
 type flagConfig []string
@@ -67,8 +105,14 @@ func initConfig(confs flagConfig) {
 				ConfigPath = conf
 			}
 
-			if data, _ = os.ReadFile(conf); data == nil {
+			Logger.Debug().Str("file", conf).Msg("config: reading config file during initialization")
+			if data, err := os.ReadFile(conf); err != nil {
+				Logger.Warn().Err(err).Str("file", conf).Msg("config: failed to read config file during initialization")
 				continue
+			} else if data == nil {
+				continue
+			} else {
+				Logger.Debug().Int("bytes", len(data)).Str("file", conf).Msg("config: read config file successfully during initialization")
 			}
 
 			data = []byte(shell.ReplaceEnvVars(string(data)))

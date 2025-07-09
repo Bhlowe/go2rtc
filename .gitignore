@@ -10,6 +10,7 @@ go2rtc_linux*
 go2rtc_mac*
 go2rtc_win*
 go2rtc.exe
+go2rtc
 
 0_test.go
 

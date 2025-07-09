@@ -159,7 +159,9 @@
     const url = new URL('api', location.href);
     fetch(url, {cache: 'no-cache'}).then(r => r.json()).then(data => {
         const info = document.querySelector('.info');
-        info.innerText = `Version: ${data.version}, Config: ${data.config_path}`;
+        let text = `Version: ${data.version}, Config: ${data.config_path}`;
+        if (data.build_date) text += ` Built: ${data.build_date}`;
+	info.innerText = text;
     });
 
     reload();
