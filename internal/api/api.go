@@ -46,6 +46,10 @@ func Init() {
 	basePath = cfg.Mod.BasePath
 	log = app.GetLogger("api")
 
+	if cfg.Mod.Password == "" {
+		log.Error().Msg("Error: Password Empty for api.go")
+	}
+
 	initStatic(cfg.Mod.StaticDir, cfg.Mod.Username, cfg.Mod.Password)
 
 	HandleFunc("api", apiHandler)

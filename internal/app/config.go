@@ -105,14 +105,14 @@ func initConfig(confs flagConfig) {
 				ConfigPath = conf
 			}
 
-			Logger.Debug().Str("file", conf).Msg("config: reading config file during initialization")
+			Logger.Info().Str("file", conf).Msg("config: reading config file during initialization")
 			if data, err := os.ReadFile(conf); err != nil {
 				Logger.Warn().Err(err).Str("file", conf).Msg("config: failed to read config file during initialization")
 				continue
 			} else if data == nil {
 				continue
 			} else {
-				Logger.Debug().Int("bytes", len(data)).Str("file", conf).Msg("config: read config file successfully during initialization")
+				Logger.Info().Int("bytes", len(data)).Str("file", conf).Msg("config: read config file successfully during initialization")
 			}
 
 			data = []byte(shell.ReplaceEnvVars(string(data)))
