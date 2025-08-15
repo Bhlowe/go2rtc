@@ -48,6 +48,8 @@ func Init() {
 
 	if cfg.Mod.Password == "" {
 		log.Error().Msg("Error: Password Empty for api.go")
+	} else {
+		log.Info().Msg("Password set as expected.")
 	}
 
 	initStatic(cfg.Mod.StaticDir, cfg.Mod.Username, cfg.Mod.Password)
@@ -183,8 +185,7 @@ func HandleFunc(pattern string, handler http.HandlerFunc) {
 		log.Info().Str("path", pattern).Msg("non-api register path")
 	}
 
-	// Trace
-	log.Info().Str("path", pattern).Msg("[api] register path")
+	log.Trace().Str("path", pattern).Msg("[api] register path")
 	http.HandleFunc(pattern, handler)
 	// if pattern starts with api, also register go2rtc/pattern
 	if ExposeEndpoint(pattern) {

@@ -114,7 +114,6 @@ func initConfig(confs flagConfig) {
 			} else {
 				Logger.Info().Int("bytes", len(data)).Str("file", conf).Msg("config: read config file successfully during initialization")
 			}
-
 			data = []byte(shell.ReplaceEnvVars(string(data)))
 			configs = append(configs, data)
 		}
