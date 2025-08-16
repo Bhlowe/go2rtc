@@ -91,6 +91,13 @@ func Init() {
 	if cfg.Mod.TLSListen != "" && cfg.Mod.TLSCert != "" && cfg.Mod.TLSKey != "" {
 		go tlsListen("tcp", cfg.Mod.TLSListen, cfg.Mod.TLSCert, cfg.Mod.TLSKey)
 	}
+
+	test1 := ExposeEndpoint("/api/ws?src=foo")
+	if !test1 {
+		log.Info().Msg("api/ws?src=foo")
+
+	}
+
 }
 
 func listen(network, address string) {
@@ -243,8 +250,9 @@ func middlewareAuth(username, password string, next http.Handler) http.Handler {
 		if strings.HasPrefix(r.RequestURI, "/go2rtc/") {
 			check = false
 		}
+		exposed := ExposeEndpoint(r.RequestURI)
 
-		if !ExposeEndpoint(r.RequestURI) {
+		if exposed {
 			check = false
 		}
 
