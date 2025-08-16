@@ -154,7 +154,7 @@ const (
 var Handler http.Handler
 
 func ExposeEndpoint(pattern string) bool {
-	if pattern == "/api/ws" {
+	if strings.HasPrefix(pattern, "/api/ws") {
 		return true
 	}
 	if strings.HasPrefix(pattern, "/api/hls") {

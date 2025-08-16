@@ -2,9 +2,8 @@ package api
 
 import (
 	"crypto/subtle"
-	"net/http"
-
 	"github.com/AlexxIT/go2rtc/www"
+	"net/http"
 )
 
 func initStatic(staticDir string, username string, password string) {
