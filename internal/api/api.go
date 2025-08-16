@@ -244,9 +244,14 @@ func middlewareAuth(username, password string, next http.Handler) http.Handler {
 			check = false
 		}
 
+		if !ExposeEndpoint(r.RequestURI) {
+			check = false
+		}
+
 		if check {
 			user, pass, ok := r.BasicAuth()
 			if !ok || user != username || pass != password {
+
 				log.Info().Str("url", r.RequestURI).Msg("[api] unauthorized")
 				w.Header().Set("Www-Authenticate", `Basic realm="go2rtc"`)
 				http.Error(w, "Unauthorized", http.StatusUnauthorized)
