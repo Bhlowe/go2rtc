@@ -48,6 +48,8 @@ func (c *Conn) Accept() error {
 		c.Fire(req)
 
 		if valid, empty := c.auth.Validate(req); !valid {
+			// LOG this
+			
 			res := &tcp.Response{
 				Status:  "401 Unauthorized",
 				Header:  map[string][]string{"Www-Authenticate": {`Basic realm="go2rtc"`}},

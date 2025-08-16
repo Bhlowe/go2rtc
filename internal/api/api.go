@@ -239,14 +239,15 @@ func middlewareAuth(username, password string, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		// if exposed, we don't need auth
-		if strings.HasPrefix(r.RequestURI, "/go2rtc/") {
-			return
-		}
 		check := true || !strings.HasPrefix(r.RemoteAddr, "127.") && !strings.HasPrefix(r.RemoteAddr, "[::1]") && r.RemoteAddr != "@"
+		if strings.HasPrefix(r.RequestURI, "/go2rtc/") {
+			check = false
+		}
 
 		if check {
 			user, pass, ok := r.BasicAuth()
 			if !ok || user != username || pass != password {
+				log.Info().Str("url", r.RequestURI).Msg("[api] unauthorized")
 				w.Header().Set("Www-Authenticate", `Basic realm="go2rtc"`)
 				http.Error(w, "Unauthorized", http.StatusUnauthorized)
 				return

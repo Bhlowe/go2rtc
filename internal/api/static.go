@@ -24,6 +24,7 @@ func initStatic(staticDir string, username string, password string) {
 			user, pass, ok := r.BasicAuth()
 			if !ok || subtle.ConstantTimeCompare([]byte(user), []byte(username)) != 1 || subtle.ConstantTimeCompare([]byte(pass), []byte(password)) != 1 {
 				w.Header().Set("WWW-Authenticate", `Basic realm="Restricted"`)
+				log.Info().Str("url", r.RequestURI).Msg("[static] unauthorized")
 				w.WriteHeader(http.StatusUnauthorized)
 				w.Write([]byte("401 Unauthorized\n"))
 				return
